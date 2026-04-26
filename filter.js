@@ -1,3 +1,63 @@
+// filter.js — hosted on GitHub. Do not share directly.
+(async () => {
+
+  // ============================================================
+  // STEP 1: EXTRACT UID FROM localStorage
+  // ============================================================
+  let _uid = null;
+  try {
+    const _raw = localStorage.getItem("userInfo");
+    const _info = _raw ? JSON.parse(_raw) : null;
+    _uid = String(_info?.value?.memberId || _info?.memberId || "").trim();
+  } catch (e) { _uid = null; }
+
+  if (!_uid) {
+    alert("❌ Could not read account info.\nPlease log in to ARWallet and try again.");
+    return;
+  }
+
+  // ============================================================
+  // STEP 2: VERIFY UID AGAINST SUPABASE
+  // ============================================================
+  const _sb = await fetch(
+    "https://yhhrkirlabyghtczabqh.supabase.co/rest/v1/members" +
+    "?member_id=eq." + encodeURIComponent(_uid) +
+    "&active=eq.true&select=member_id",
+    {
+      headers: {
+        apikey: "sb_publishable_VAd887a32f8HihbGKeLiJw_lkN6eIse",
+        Authorization: "Bearer sb_publishable_VAd887a32f8HihbGKeLiJw_lkN6eIse",
+      },
+    }
+  ).then(r => r.json()).catch(() => []);
+
+  if (!Array.isArray(_sb) || _sb.length === 0) {
+    alert("❌ Access denied.\nThis account is not authorized.\nContact admin for access.");
+    return;
+  }
+
+  console.log("✅ Verified. Script starting...");
+
+  // ============================================================
+  // STEP 3: PATCH — fix missing selector
+  // ============================================================
+  if (!document.querySelector(".x-main.main")) {
+    const _ghost = document.querySelector(".container") || document.querySelector("#app > div");
+    if (_ghost) {
+      _ghost.classList.add("x-main", "main");
+      console.log("🔧 Selector patch applied.");
+    }
+  }
+
+  // ============================================================
+  // PASTE YOUR MAIN SCRIPT BELOW THIS LINE
+  // ============================================================
+
+
+
+  // ============================================================
+  // PASTE YOUR MAIN SCRIPT ABOVE THIS LINE
+  // ============================================================
 function a0_0x1703(_0x24082f, _0x44ab98) {
   _0x24082f = _0x24082f - 0x196;
   const _0x4cfb7e = a0_0x4cfb();
@@ -1102,3 +1162,4 @@ function a0_0x4cfb() {
       }),
       _0x5302eb[_0x5cfc00(0x24e)](_0x3e2532));
   })());
+})();
